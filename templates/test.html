@@ -1,0 +1,76 @@
+<div>
+<button onClick = "startFunc()">Click Me</button>
+</div>
+
+<div id="results">
+  <span id="final_span" class="final"></span>
+  <span id="interim_span" class="interim"></span>
+</div>
+
+<script type = "text/javascript">
+
+var transcript;
+var recognizing = false;
+
+if('webkitSpeechRecognition' in window)
+    {
+        var reco = new webkitSpeechRecognition();
+        
+        reco.interim = true;
+        
+        reco.onstart = function()
+        {
+            recognizing = true;
+        };
+        
+        reco.onerror = function(event)
+        {
+            console.log(event.error);
+        };
+        
+        reco.onend = function()
+        {
+            recognizing = false;
+        };
+        
+        reco.onresult = function(event)
+        {
+            var interim_transcript = '';
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+              if (event.results[i].isFinal) {
+                transcript += event.results[i][0].transcript;
+              } else {
+                interim_transcript += event.results[i][0].transcript;
+              }
+            }
+            transcript = capitalize(transcript);
+            transcript = linebreak(transcript);
+            final_span.innerHTML = transcript
+        };
+        
+    }
+
+var two_line = /\n\n/g;
+var one_line = /\n/g;
+function linebreak(s) {
+  return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
+}
+
+function capitalize(s) {
+  return s.replace(s.substr(0,1), function(m) { return m.toUpperCase(); });
+}
+
+function startFunc()
+{
+    if(recognizing)
+    {
+        reco.stop();
+        return;
+    }
+    transcript = '';
+    reco.lang = "en-US";
+    reco.maxAlternatives = 10;
+    reco.start();
+    
+}
+</script>

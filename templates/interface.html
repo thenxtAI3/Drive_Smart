@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Driving Mode</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../static/jumbotron-narrow.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+      body {
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+        font-weight:lighter;
+        background: url("../static/drive_smart_back.1.jpg");
+        background-size:  100% 100%;
+        background-repeat: no-repeat;
+        background-position:top center;
+        background-attachment: fixed;
+        color: white;
+        text-align:center;
+      }
+      h4 {
+        line-height: 30px;
+        font-size: 20px;
+        font-weight:lighter;
+      }
+      h3 {
+        line-height: 30px;
+        font-size: 35px;
+      }
+      p {
+        padding-left:5px;
+        padding-right:5px;
+        font-size: 15px;
+        line-height:20px;
+        letter-spacing:.7px;
+      }
+      .button {
+      background-color: #FFFFFF;
+      border: none;
+      color: black;
+      padding: 4px 25px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+      margin: 4px 2px;
+      }
+      .mic {
+      padding: 25px 25px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin: 4px 2px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+        <h3>What shall we save?</h3>
+        <!--<a class="mic" value="website" ><img src="../static/website.jpg" width=80px height=90px></a><a class="mic" value><img src="../static/Notes.jpg" width=80px height=90px></a>
+        <a class="mic" value="address"><img src="../static/address.jpg" width=80px height=90px></a><a class="mic" value=""><img src="../static/contacts.jpg" width=80px height=90px></a>-->
+        <input type='image' src='../static/website.jpg' width=45% height=60% onclick = "website()"/>  <input type='image' src='../static/Notes.jpg' width=45% height=60% onclick = "note()"/>
+        <input type='image' src='../static/address.jpg' width=45% height=60% onclick = "address()" />  <input type='image' src='../static/contacts.jpg' width=45% height=60% onclick = "contact()"/>
+        <form action="/driving" method="POST">
+          <input type="hidden" id="savebox">
+          <input type="submit" class="button" value="Save">
+        </form>
+        <br><br>
+        <p style="text-align:center;"><a type="sumbit" class="button" href="/thank_you">End Session</a></p>
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script type = "text/javascript">
+
+var transcript;
+var id_name;
+var recognizing = false;
+
+if('webkitSpeechRecognition' in window)
+    {
+        var reco = new webkitSpeechRecognition();
+        
+        reco.interim = true;
+        
+        reco.onstart = function()
+        {
+            recognizing = true;
+        };
+        
+        reco.onerror = function(event)
+        {
+            console.log(event.error);
+        };
+        
+        reco.onend = function()
+        {
+            recognizing = false;
+            savebox.value = transcript;
+            savebox.name = id_name;
+            
+        };
+        
+        reco.onresult = function(event)
+        {
+            var interim_transcript = '';
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+              if (event.results[i].isFinal) {
+                transcript += event.results[i][0].transcript;
+              } else {
+                interim_transcript += event.results[i][0].transcript;
+              }
+            }
+            transcript = capitalize(transcript);
+            transcript = linebreak(transcript);
+        };
+        
+    }
+
+var two_line = /\n\n/g;
+var one_line = /\n/g;
+function linebreak(s) {
+  return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
+}
+
+function capitalize(s) {
+  return s.replace(s.substr(0,1), function(m) { return m.toUpperCase(); });
+}
+
+function website()
+{
+    if(recognizing)
+    {
+        reco.stop();
+        return;
+    }
+    transcript = '';
+    id_name = 'website';
+    reco.lang = "en-US";
+    reco.maxAlternatives = 10;
+    reco.start();
+    
+}
+function note()
+{
+    if(recognizing)
+    {
+        reco.stop();
+        return;
+    }
+    transcript = '';
+    id_name = 'note';
+    reco.lang = "en-US";
+    reco.maxAlternatives = 10;
+    reco.start();
+    
+}
+function address()
+{
+    if(recognizing)
+    {
+        reco.stop();
+        return;
+    }
+    transcript = '';
+    id_name = 'address';
+    reco.lang = "en-US";
+    reco.maxAlternatives = 10;
+    reco.start();
+    
+}
+function contact()
+{
+    if(recognizing)
+    {
+        reco.stop();
+        return;
+    }
+    transcript = '';
+    id_name = 'contact';
+    reco.lang = "en-US";
+    reco.maxAlternatives = 10;
+    reco.start();
+    
+}
+</script>
+  </body>
+</html>
