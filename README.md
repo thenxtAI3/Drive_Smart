@@ -12,3 +12,5 @@ Main Interface: Four option buttons "End Session" button to end session
 Exit Screen: Thank You! state that email has been sent
 
 How to use the app: The app is explained in a feature page during usage :D (as of now, our app only supports desktop browsers and Android phones)
+
+![Project Drive Smart](https://github.com/thenxtAI3/Drive_Smart/blob/master/Preview.jpg)
